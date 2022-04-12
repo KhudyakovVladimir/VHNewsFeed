@@ -1,9 +1,11 @@
 package com.khudyakovvladimir.vhnewsfeed.di
 
 import android.app.Application
+import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
+import dagger.Provides
 
 @Component(modules = [MainModule::class])
 interface AppComponent {
@@ -17,4 +19,10 @@ interface AppComponent {
 }
 
 @Module
-class MainModule {}
+class MainModule {
+
+    @Provides
+    fun provideNewsHelper(): NewsHelper {
+        return NewsHelper()
+    }
+}

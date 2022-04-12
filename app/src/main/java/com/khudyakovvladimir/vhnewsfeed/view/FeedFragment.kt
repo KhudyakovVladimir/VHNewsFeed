@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khudyakovvladimir.vhnewsfeed.R
+import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
 import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsFeedAdapter
 
 class FeedFragment: Fragment() {
@@ -22,11 +23,16 @@ class FeedFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+//        val newsHelper = NewsHelper()
+//        val v = newsHelper.getNews(activity!!.applicationContext)
+
         val list = listOf("one", "two", "three")
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
-        newsFeedAdapter = NewsFeedAdapter(list)
+        newsFeedAdapter = NewsFeedAdapter(activity!!.applicationContext, list)
         recyclerView.adapter = newsFeedAdapter
+
+
     }
 }

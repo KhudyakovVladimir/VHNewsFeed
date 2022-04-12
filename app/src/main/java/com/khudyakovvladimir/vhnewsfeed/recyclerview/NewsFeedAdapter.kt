@@ -1,5 +1,6 @@
 package com.khudyakovvladimir.vhnewsfeed.recyclerview
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.khudyakovvladimir.vhnewsfeed.R
+import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
 
 class NewsFeedAdapter(
+    var context: Context,
     var list: List<String>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -22,6 +25,9 @@ class NewsFeedAdapter(
             imageView = itemView.findViewById(R.id.imageViewItem)
             textView = itemView.findViewById(R.id.textViewItem)
             textViewTwo = itemView.findViewById(R.id.textViewItem2)
+
+            val newsHelper = NewsHelper()
+            newsHelper.getNews(context, textView, textViewTwo, imageView)
 
             textView.text = string
         }
