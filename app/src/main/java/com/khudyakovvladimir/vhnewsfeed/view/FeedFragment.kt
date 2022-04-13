@@ -20,6 +20,10 @@ import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
 import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsFeedAdapter
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModel
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FeedFragment: Fragment() {
@@ -56,7 +60,6 @@ class FeedFragment: Fragment() {
             editor.putBoolean("database", true)
             editor.apply()
         }
-
         newsHelper.getNewsAndSave(activity!!.applicationContext)
     }
 
@@ -79,7 +82,24 @@ class FeedFragment: Fragment() {
 
         newsViewModel.getListNews().observe(this) {
             newsFeedAdapter.list = it
+            newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext)
         }
 
+        CoroutineScope(Dispatchers.Main).launch {
+            // time???
+            delay(2000)
+            newsFeedAdapter.notifyDataSetChanged()
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    Log.d("TAG", "UPDATE !!!")
+                    //newsHelper.getNewsAndSave(activity!!.applicationContext)
+                    newsFeedAdapter.notifyDataSetChanged()
+                }
+            }
+        })
     }
 }

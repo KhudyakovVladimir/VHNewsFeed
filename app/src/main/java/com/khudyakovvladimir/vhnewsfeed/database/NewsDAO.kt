@@ -15,6 +15,9 @@ interface NewsDAO {
     @Query("SELECT * FROM news WHERE id = :id")
     fun getNoteById(id: Int): NewsEntity
 
+    @Query("DELETE FROM news")
+    fun deleteAllNews()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNewsEntity(newsEntity: NewsEntity)
 
