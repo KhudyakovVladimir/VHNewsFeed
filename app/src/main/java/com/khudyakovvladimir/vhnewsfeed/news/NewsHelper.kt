@@ -65,15 +65,23 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 //                        val description = response.body()?.articles!![0].description
 //                        val urlToImage = response.body()?.articles!![0].urlToImage
 
+                        val list = arrayListOf<String>()
+
                         Log.d("TAG", "size = ${response.body()?.articles!!.size}")
 
                         for (i in response.body()?.articles!!.indices) {
 
-                            //all fields need to null check
-
-                            val title = response.body()?.articles!![i].title
-                            val description = response.body()?.articles!![i].description
+                            var title = response.body()?.articles!![i].title
+                            var description = response.body()?.articles!![i].description
                             var urlToImage = response.body()?.articles!![i].urlToImage
+
+                            if(title == null) {
+                                title = ""
+                            }
+
+                            if(description == null) {
+                                description = ""
+                            }
 
                             if(urlToImage == null) {
                                 urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
@@ -81,17 +89,19 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
                             val urlToString = urlToImage.toString()
 
-                            Log.d("TAG", "id = $i TITLE = $title")
-                            Log.d("TAG", "urlToString = $urlToString")
+                            //Log.d("TAG", "id = $i TITLE = $title")
+                            //Log.d("TAG", "id = $i DESCRIPTION = $description")
+                            //Log.d("TAG", "URLTOSTRING = $urlToString")
 
-                            CoroutineScope(Dispatchers.IO).launch {
-                                //newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
-                            }
+                            newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
+                            list.add(title)
                         }
 
                         CoroutineScope(Dispatchers.IO).launch {
                             Log.d("TAG", "DATABASE = ${newsDAO.getNewsFromDatabase()}")
                         }
+
+                        Log.d("TAG", "LIST = $list")
 
                     }
                 }
