@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URL
 import javax.inject.Inject
 
 
@@ -60,15 +61,32 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 if(response.isSuccessful) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val title = response.body()?.articles!![0].title
-                        val description = response.body()?.articles!![0].description
-                        val urlToImage = response.body()?.articles!![0].urlToImage
+//                        val title = response.body()?.articles!![0].title
+//                        val description = response.body()?.articles!![0].description
+//                        val urlToImage = response.body()?.articles!![0].urlToImage
 
                         Log.d("TAG", "size = ${response.body()?.articles!!.size}")
 
-                        for (i in 1..response.body()?.articles!!.size) {
+                        for (i in 1..response.body()?.articles!!.size - 2) {
+
+                            //all fields need to null check
+
+                            val title = response.body()?.articles!![i].title
+                            val description = response.body()?.articles!![i].description
+                            var urlToImage = response.body()?.articles!![i].urlToImage
+
+                            if(urlToImage == null) {
+                                urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
+                            }
+
+                            val urlToString = urlToImage.toString()
+
                             Log.d("TAG", "id = $i TITLE = $title")
-                            newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToImage.toString()))
+                            Log.d("TAG", "urlToString = $urlToString")
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                //newsDAO.updateNewsEntity(NewsEntity(i, title, description, urlToString))
+                            }
                         }
 
                     }
