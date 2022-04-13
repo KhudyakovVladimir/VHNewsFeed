@@ -26,9 +26,6 @@ class NewsFeedAdapter(
             textView = itemView.findViewById(R.id.textViewItem)
             textViewTwo = itemView.findViewById(R.id.textViewItem2)
 
-            val newsHelper = NewsHelper()
-            newsHelper.getNews(context, textView, textViewTwo, imageView)
-
             textView.text = string
         }
     }
