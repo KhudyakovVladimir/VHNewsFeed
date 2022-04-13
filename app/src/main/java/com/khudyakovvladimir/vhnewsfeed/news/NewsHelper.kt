@@ -33,7 +33,45 @@ class NewsHelper @Inject constructor() {
                             .placeholder(R.drawable.btn_star)
                             .error(R.drawable.btn_star)
 
-                        Glide.with(context).load(response.body()?.articles!![0].urlToImage).apply(options).into(imageView)
+                        Glide
+                            .with(context)
+                            .load(response.body()?.articles!![0].urlToImage)
+                            .apply(options)
+                            .into(imageView)
+                    }
+                }
+                else {
+                    Log.d("TAG", "RESPONSE is NOT successful")
+                    //println(response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<News>, t: Throwable) {
+                //set values from cache
+            }
+
+        })
+    }
+
+    fun getNewsAndSave(context: Context, textViewTitle: TextView, textViewText: TextView, imageView: ImageView) {
+        context.retrofit.create(NewsApi::class.java).getNews().enqueue(object : Callback<News> {
+            override fun onResponse(call: Call<News>, response: Response<News>) {
+                if(response.isSuccessful) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        //set value in all available views
+                        Log.d("TAG", "${response.body()?.articles!![0].urlToImage}")
+                        textViewTitle.text = response.body()?.articles!![0].title
+                        textViewText.text = response.body()?.articles!![0].description
+
+                        val options: RequestOptions = RequestOptions()
+                            .placeholder(R.drawable.btn_star)
+                            .error(R.drawable.btn_star)
+
+                        Glide
+                            .with(context)
+                            .load(response.body()?.articles!![0].urlToImage)
+                            .apply(options)
+                            .into(imageView)
                     }
                 }
                 else {

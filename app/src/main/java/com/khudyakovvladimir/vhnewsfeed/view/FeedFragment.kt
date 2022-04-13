@@ -1,5 +1,6 @@
 package com.khudyakovvladimir.vhnewsfeed.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,13 @@ class FeedFragment: Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var newsFeedAdapter: NewsFeedAdapter
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        val newsHelper = NewsHelper()
+        //newsHelper.getNewsAndSave(activity!!.applicationContext)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.feed_fragment_layout, container, false)
