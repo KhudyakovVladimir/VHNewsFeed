@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class NewsEntity(
 
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    var id: Int,
 
     @ColumnInfo(name = "title", typeAffinity = ColumnInfo.TEXT)
     var title: String,

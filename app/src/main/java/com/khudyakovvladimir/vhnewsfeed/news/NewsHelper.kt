@@ -67,7 +67,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
                         Log.d("TAG", "size = ${response.body()?.articles!!.size}")
 
-                        for (i in 1..response.body()?.articles!!.size - 2) {
+                        for (i in response.body()?.articles!!.indices) {
 
                             //all fields need to null check
 
@@ -85,8 +85,12 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                             Log.d("TAG", "urlToString = $urlToString")
 
                             CoroutineScope(Dispatchers.IO).launch {
-                                //newsDAO.updateNewsEntity(NewsEntity(i, title, description, urlToString))
+                                //newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
                             }
+                        }
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            Log.d("TAG", "DATABASE = ${newsDAO.getNewsFromDatabase()}")
                         }
 
                     }
