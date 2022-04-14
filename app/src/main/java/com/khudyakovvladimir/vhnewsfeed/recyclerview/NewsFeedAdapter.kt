@@ -98,7 +98,7 @@ class NewsFeedAdapter(
             tempList.addAll(tempList2)
             val resultList = tempList2.toList()
             list = resultList
-            notifyDataSetChanged()
+            //notifyDataSetChanged()
         }
     }
 

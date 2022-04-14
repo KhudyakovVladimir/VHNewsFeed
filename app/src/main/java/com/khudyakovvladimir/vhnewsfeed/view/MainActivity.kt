@@ -8,9 +8,8 @@ import com.khudyakovvladimir.vhnewsfeed.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_AppCompat_DayNight_NoActionBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        Log.d("TAG", "START the APP")
     }
 }

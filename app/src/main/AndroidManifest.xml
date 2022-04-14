@@ -15,6 +15,7 @@
             android:theme="@style/Theme.VHNewsFeed">
         <activity
                 android:exported="true"
+                android:theme="@style/Theme.VHNewsFeed.Launcher"
                 android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
