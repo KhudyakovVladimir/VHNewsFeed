@@ -34,8 +34,8 @@ class NewsFeedAdapter(
             textViewTwo = itemView.findViewById(R.id.textViewItem2)
 
             val options: RequestOptions = RequestOptions()
-                .placeholder(R.drawable.feed_icon)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.stub)
+                .error(R.drawable.stub)
 
             Glide
                 .with(context)
