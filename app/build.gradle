@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.khudyakovvladimir.vhfileexplorer"
+        applicationId "com.khudyakovvladimir.vhnewsfeed"
         minSdkVersion 23
         targetSdkVersion 31
         versionCode 1

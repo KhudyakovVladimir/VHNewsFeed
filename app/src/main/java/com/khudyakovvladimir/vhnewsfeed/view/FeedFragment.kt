@@ -13,7 +13,6 @@ import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khudyakovvladimir.vhnewsfeed.R
@@ -21,8 +20,9 @@ import com.khudyakovvladimir.vhnewsfeed.application.appComponent
 import com.khudyakovvladimir.vhnewsfeed.database.DBHelper
 import com.khudyakovvladimir.vhnewsfeed.database.NewsEntity
 import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
-import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsDiffUtilCallback
 import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsFeedAdapter
+import com.khudyakovvladimir.vhnewsfeed.utils.AnimationHelper
+import com.khudyakovvladimir.vhnewsfeed.utils.SystemHelper
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModel
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +41,14 @@ class FeedFragment: Fragment() {
     lateinit var newsHelper: NewsHelper
 
     @Inject
+    lateinit var animationHelper: AnimationHelper
+
+    @Inject
+    lateinit var systemHelper: SystemHelper
+
+    private var stubColor = R.drawable.stub_white
+
+    @Inject
     lateinit var factory: NewsViewModelFactory.Factory
     lateinit var newsViewModel: NewsViewModel
     lateinit var newsViewModelFactory: NewsViewModelFactory
@@ -49,15 +57,18 @@ class FeedFragment: Fragment() {
         super.onAttach(context)
         context.appComponent.injectFeedFragment(this)
 
+        stubColor = when(systemHelper.checkTheme(context)) {
+            true -> R.drawable.stub_black
+            false -> R.drawable.stub_white
+        }
+
         val sharedPreferences = activity?.applicationContext!!.getSharedPreferences("settings", AppCompatActivity.MODE_PRIVATE)
 
         if (sharedPreferences.contains("database")) {
-            Log.d("TAG", "isDatabaseCreated = true")
             isDatabaseCreated = sharedPreferences.getBoolean("database", false)
         }
 
         if (!isDatabaseCreated) {
-            Log.d("TAG", "isDatabaseCreated = false")
             val dbHelper = activity?.let { DBHelper(it) }
             dbHelper?.createDatabase()
 
@@ -65,7 +76,6 @@ class FeedFragment: Fragment() {
             editor.putBoolean("database", true)
             editor.apply()
         }
-        //newsHelper.getNewsAndSave(activity!!.applicationContext)
         newsHelper.getNewsAndReturnList(activity!!.applicationContext)
     }
 
@@ -83,10 +93,10 @@ class FeedFragment: Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
-        newsFeedAdapter = NewsFeedAdapter(activity!!.applicationContext, list)
+        newsFeedAdapter = NewsFeedAdapter(activity!!.applicationContext, list, stubColor)
         recyclerView.adapter = newsFeedAdapter
 
-        fadeInView(recyclerView)
+        animationHelper.fadeInView(recyclerView)
 
         newsViewModel.getListNews().observe(this) {
             newsFeedAdapter.list = it
@@ -102,7 +112,6 @@ class FeedFragment: Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Log.d("TAG", "UPDATE !!!")
                     newsHelper.getNewsAndSave(activity!!.applicationContext)
                     newsFeedAdapter.notifyDataSetChanged()
                 }
@@ -110,15 +119,4 @@ class FeedFragment: Fragment() {
         })
     }
 
-    private fun fadeInView(img: View) {
-        val fadeIn: Animation = AlphaAnimation(0F, 1F)
-        fadeIn.interpolator = AccelerateInterpolator()
-        fadeIn.duration = 3000
-        fadeIn.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationEnd(animation: Animation) {}
-            override fun onAnimationRepeat(animation: Animation) {}
-            override fun onAnimationStart(animation: Animation) {}
-        })
-        img.startAnimation(fadeIn)
-    }
 }

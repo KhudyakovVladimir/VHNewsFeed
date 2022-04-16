@@ -34,7 +34,6 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
                             newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
                         }
-                        //flag to start showing recyclerView
                     }
                 }
                 else {

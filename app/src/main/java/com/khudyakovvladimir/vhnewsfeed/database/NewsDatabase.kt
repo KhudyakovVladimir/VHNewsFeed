@@ -21,13 +21,11 @@ abstract class NewsDatabase: RoomDatabase() {
                         Room
                             .databaseBuilder(context, NewsDatabase::class.java, NEWS_DATABASE)
                             .build()
-
                 }
             }
             return instance
         }
     }
-
 
     fun destroyInstance() {
         instance = null

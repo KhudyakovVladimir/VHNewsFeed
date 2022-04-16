@@ -9,12 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MyApplication: Application() {
 
-    //api key
-    //e7284b9d8b2046848cd78f161bc69580
-    //GET https://newsapi.org/v2/top-headlines?country=us&apiKey=API_KEY
-    //https://newsapi.org/v2/top-headlines?country=ru&apiKey=e7284b9d8b2046848cd78f161bc69580
-    //https://jsonparser.org
-
     lateinit var retrofit: Retrofit
     private set
 

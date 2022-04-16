@@ -1,6 +1,7 @@
 package com.khudyakovvladimir.vhnewsfeed.recyclerview
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
@@ -19,7 +19,8 @@ import java.net.URL
 
 class NewsFeedAdapter(
     var context: Context,
-    var list: List<NewsEntity>
+    var list: List<NewsEntity>,
+    var stubColor: Int
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
     inner class FeedViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -33,42 +34,19 @@ class NewsFeedAdapter(
             textView = itemView.findViewById(R.id.textViewItem)
             textViewTwo = itemView.findViewById(R.id.textViewItem2)
 
+            Log.d("TAG", "bind() - stubColor = $stubColor")
+
             val options: RequestOptions = RequestOptions()
-                .placeholder(R.drawable.stub)
-                .error(R.drawable.stub)
+                .placeholder(stubColor)
+                .error(stubColor)
 
             Glide
                 .with(context)
                 .load(URL(newsEntity.urlToImage))
-                //.transform(CenterCrop(), RoundedCorners(50))
                 .transform(RoundedCorners(50))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .apply(options)
-//                .listener(object: RequestListener<Drawable> {
-//                    override fun onLoadFailed(
-//                        e: GlideException?,
-//                        model: Any?,
-//                        target: Target<Drawable>?,
-//                        isFirstResource: Boolean
-//                    ): Boolean {
-//                        Log.d("TAG", "${newsEntity.title} - onLoadFailed")
-//                        imageView.setImageResource(R.drawable.feed_icon)
-//                        return false
-//                    }
-//
-//                    override fun onResourceReady(
-//                        resource: Drawable?,
-//                        model: Any?,
-//                        target: Target<Drawable>?,
-//                        dataSource: DataSource?,
-//                        isFirstResource: Boolean
-//                    ): Boolean {
-//                        Log.d("TAG", "${newsEntity.title} - onResourceReady")
-//                        target!!.onResourceReady(resource!!, DrawableCrossFadeTransition(1000, isFirstResource))
-//                        return true
-//                    }
-//                })
                 .into(imageView)
 
             textView.text = newsEntity.title
@@ -98,7 +76,6 @@ class NewsFeedAdapter(
             tempList.addAll(tempList2)
             val resultList = tempList2.toList()
             list = resultList
-            //notifyDataSetChanged()
         }
     }
 

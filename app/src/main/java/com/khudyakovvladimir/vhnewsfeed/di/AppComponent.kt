@@ -7,6 +7,8 @@ import com.khudyakovvladimir.vhnewsfeed.database.DBHelper
 import com.khudyakovvladimir.vhnewsfeed.database.NewsDAO
 import com.khudyakovvladimir.vhnewsfeed.database.NewsDatabase
 import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
+import com.khudyakovvladimir.vhnewsfeed.utils.AnimationHelper
+import com.khudyakovvladimir.vhnewsfeed.utils.SystemHelper
 import com.khudyakovvladimir.vhnewsfeed.view.FeedFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -48,4 +50,14 @@ class MainModule {
 
     @Provides
     fun provideNewsDao(newsDatabase: NewsDatabase) = newsDatabase.newsDAO()
+
+    @Provides
+    fun provideAnimationHelper(): AnimationHelper {
+        return AnimationHelper()
+    }
+
+    @Provides
+    fun provideSystemHelper(): SystemHelper {
+        return SystemHelper()
+    }
 }

@@ -2,8 +2,6 @@ package com.khudyakovvladimir.vhnewsfeed.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.navigation.Navigation
 import com.khudyakovvladimir.vhnewsfeed.R
 
 class MainActivity : AppCompatActivity() {
