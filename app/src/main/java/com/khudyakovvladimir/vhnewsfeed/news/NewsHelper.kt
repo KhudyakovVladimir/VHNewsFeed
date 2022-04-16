@@ -5,6 +5,7 @@ import android.util.Log
 import com.khudyakovvladimir.vhnewsfeed.application.retrofit
 import com.khudyakovvladimir.vhnewsfeed.database.NewsDAO
 import com.khudyakovvladimir.vhnewsfeed.database.NewsEntity
+import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsFeedAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
         })
     }
 
-    fun getNewsAndReturnList(context: Context): List<NewsEntity> {
+    fun getNewsAndReturnList(context: Context, newsFeedAdapter: NewsFeedAdapter): List<NewsEntity> {
 
         val listNewsEntity = arrayListOf<NewsEntity>()
 
@@ -67,6 +68,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                             newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
                             listNewsEntity.add(NewsEntity(i, title, description, urlToString))
                         }
+                        newsFeedAdapter.notifyDataSetChanged()
                     }
                 }
                 else {
@@ -79,4 +81,5 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
         return listNewsEntity
     }
+
 }

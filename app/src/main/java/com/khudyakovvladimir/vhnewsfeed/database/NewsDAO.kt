@@ -12,8 +12,11 @@ interface NewsDAO {
     @Query("SELECT * FROM news")
     fun getAllNewsAsLiveData(): LiveData<List<NewsEntity>>?
 
+    @Query("SELECT COUNT(id) FROM news")
+    fun getCount(): Int
+
     @Query("SELECT * FROM news WHERE id = :id")
-    fun getNoteById(id: Int): NewsEntity
+    fun getNewsById(id: Int): NewsEntity
 
     @Query("DELETE FROM news")
     fun deleteAllNews()

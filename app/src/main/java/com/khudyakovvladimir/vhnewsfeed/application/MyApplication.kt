@@ -6,6 +6,7 @@ import com.khudyakovvladimir.vhnewsfeed.di.AppComponent
 import com.khudyakovvladimir.vhnewsfeed.di.DaggerAppComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class MyApplication: Application() {
 
@@ -17,6 +18,8 @@ class MyApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        TimeUnit.SECONDS.sleep(2)
 
         retrofit = Retrofit.Builder()
             .baseUrl("https://newsapi.org/v2/")

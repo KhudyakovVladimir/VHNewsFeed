@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,7 +21,8 @@ import java.net.URL
 class NewsFeedAdapter(
     var context: Context,
     var list: List<NewsEntity>,
-    var stubColor: Int
+    var stubColor: Int,
+    private val itemClick: (NewsEntity: NewsEntity) -> Unit
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
     inner class FeedViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -28,13 +30,13 @@ class NewsFeedAdapter(
         lateinit var imageView: ImageView
         lateinit var textView: TextView
         lateinit var textViewTwo: TextView
+        lateinit var linearLayoutItem: LinearLayout
 
         fun bind(newsEntity: NewsEntity) {
             imageView = itemView.findViewById(R.id.imageViewItem)
             textView = itemView.findViewById(R.id.textViewItem)
             textViewTwo = itemView.findViewById(R.id.textViewItem2)
-
-            Log.d("TAG", "bind() - stubColor = $stubColor")
+            linearLayoutItem = itemView.findViewById(R.id.linearLayoutItem)
 
             val options: RequestOptions = RequestOptions()
                 .placeholder(stubColor)
@@ -51,6 +53,10 @@ class NewsFeedAdapter(
 
             textView.text = newsEntity.title
             textViewTwo.text = newsEntity.description
+
+            linearLayoutItem.setOnClickListener {
+                itemClick(newsEntity)
+            }
         }
     }
 

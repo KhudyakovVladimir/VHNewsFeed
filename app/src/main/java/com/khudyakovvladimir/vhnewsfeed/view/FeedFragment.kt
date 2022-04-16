@@ -7,12 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.khudyakovvladimir.vhnewsfeed.R
@@ -76,7 +74,6 @@ class FeedFragment: Fragment() {
             editor.putBoolean("database", true)
             editor.apply()
         }
-        newsHelper.getNewsAndReturnList(activity!!.applicationContext)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,20 +89,43 @@ class FeedFragment: Fragment() {
         val list = listOf(NewsEntity(1,"pull down", "to update", "https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage"))
 
         recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.visibility = View.INVISIBLE
         recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
-        newsFeedAdapter = NewsFeedAdapter(activity!!.applicationContext, list, stubColor)
+
+        val itemClick = { newsEntity: NewsEntity -> navigateToSingleNews(newsEntity.id)}
+
+        newsFeedAdapter =
+            NewsFeedAdapter(
+                activity!!.applicationContext,
+                list,
+                stubColor,
+                itemClick
+            )
         recyclerView.adapter = newsFeedAdapter
 
-        animationHelper.fadeInView(recyclerView)
+        animationHelper.fadeInView(recyclerView, 1500)
 
         newsViewModel.getListNews().observe(this) {
             newsFeedAdapter.list = it
-            newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext)
-        }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(2000)
-            newsFeedAdapter.notifyDataSetChanged()
+            if(systemHelper.isConnectionAvailable(context!!)) {
+                Log.d("TAG", "data from Internet")
+                newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+            }else {
+                Log.d("TAG", "data from DB")
+                CoroutineScope(Dispatchers.Main).launch {
+                    val job = launch {
+                        newsFeedAdapter.list = newsViewModel.getNewsFromDB()
+                        delay(3000)
+                        Log.d("TAG", "list = ${newsFeedAdapter.list}")
+                    }
+                    job.join()
+
+
+                }
+            }
+
+            //newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -117,6 +137,12 @@ class FeedFragment: Fragment() {
                 }
             }
         })
+    }
+
+    private fun navigateToSingleNews(newsId: Int) {
+        val bundle = Bundle()
+        bundle.putInt("newsId", newsId)
+        findNavController().navigate(R.id.singleNews, bundle)
     }
 
 }

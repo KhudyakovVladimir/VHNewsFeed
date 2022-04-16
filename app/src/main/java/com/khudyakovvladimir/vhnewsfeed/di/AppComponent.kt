@@ -10,6 +10,7 @@ import com.khudyakovvladimir.vhnewsfeed.news.NewsHelper
 import com.khudyakovvladimir.vhnewsfeed.utils.AnimationHelper
 import com.khudyakovvladimir.vhnewsfeed.utils.SystemHelper
 import com.khudyakovvladimir.vhnewsfeed.view.FeedFragment
+import com.khudyakovvladimir.vhnewsfeed.view.SingleNews
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -19,6 +20,7 @@ import dagger.Provides
 interface AppComponent {
 
     fun injectFeedFragment(feedFragment: FeedFragment)
+    fun injectSingleNews(singleNews: SingleNews)
     fun injectNewsHelper(newsHelper: NewsHelper)
 
     @Component.Builder

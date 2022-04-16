@@ -6,5 +6,9 @@
 
     <fragment android:id="@+id/feedFragment"
               android:name="com.khudyakovvladimir.vhnewsfeed.view.FeedFragment"
-              android:label="FeedFragment"/>
+              android:label="FeedFragment">
+        <action android:id="@+id/action_feedFragment_to_singleNews" app:destination="@id/singleNews"/>
+    </fragment>
+    <fragment android:id="@+id/singleNews" android:name="com.khudyakovvladimir.vhnewsfeed.view.SingleNews"
+              android:label="SingleNews"/>
 </navigation>
