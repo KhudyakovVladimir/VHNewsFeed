@@ -19,31 +19,45 @@ class NewsViewModel @Inject constructor(
     val newsDAO: NewsDAO
 ) : AndroidViewModel(application) {
 
-    private var listNews: LiveData<List<NewsEntity>> = newsDAO.getAllNewsAsLiveData()!!
+    private var listNews: LiveData<List<NewsEntity>>? = newsDAO.getAllNewsAsLiveData()
 
-    fun getListNews(): LiveData<List<NewsEntity>> {
+    fun getListNews(): LiveData<List<NewsEntity>>? {
+        Log.d("TAG", "NewsViewModel - getListNews()")
         viewModelScope.launch {
-            newsDAO.getAllNewsAsLiveData()
+            //listNews = newsDAO.getAllNewsAsLiveData()!!
         }
         return listNews
     }
 
-    fun getNewsFromDB(): List<NewsEntity> {
-        var list = listOf<NewsEntity>()
+//    fun getNewsFromDB(): List<NewsEntity> {
+//        var list = listOf<NewsEntity>()
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val job = launch {
+//                list = newsDAO.getNewsFromDatabase()
+//                //listNews.value = list
+//            }
+//            job.join()
+//        }
+//        return list
+//    }
+
+    fun getNewsFromDB(): LiveData<List<NewsEntity>>? {
         CoroutineScope(Dispatchers.IO).launch {
             val job = launch {
-                list = newsDAO.getNewsFromDatabase()
-                //listNews.value = list
+                listNews = newsDAO.getAllNewsAsLiveData()
             }
             job.join()
         }
-        return list
+        return listNews
     }
 
     fun getNewsById(id: Int): NewsEntity? {
         var resultNews: NewsEntity? = null
         runBlocking {
-            resultNews = newsDAO.getNewsById(id)
+            val job = launch {
+                resultNews = newsDAO.getNewsById(id)
+            }
+            job.join()
         }
         return resultNews
     }

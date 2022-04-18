@@ -26,13 +26,12 @@ import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModel
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.URL
 import javax.inject.Inject
 
 class SingleNews: Fragment() {
-
-    private var isDatabaseCreated = false
 
     @Inject
     lateinit var newsHelper: NewsHelper
@@ -77,9 +76,9 @@ class SingleNews: Fragment() {
         var id = arguments?.getInt("newsId",0)
         Log.d("TAG", "newsId = $id")
 
-        var tempNews = NewsEntity(0, "tempNews", "tempNews", "")
+        var tempNews: NewsEntity
         CoroutineScope(Dispatchers.IO).launch {
-            tempNews = newsViewModel.getNewsById(id!!)!!
+            var tempNews = newsViewModel.getNewsById(id!!)!!
             Log.d("TAG", "${tempNews.title}")
 
             CoroutineScope(Dispatchers.Main).launch {
@@ -91,7 +90,6 @@ class SingleNews: Fragment() {
                     Glide
                         .with(context!!)
                         .load(URL(tempNews.urlToImage))
-                        //.transform(RoundedCorners(50))
                         .centerCrop()
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .diskCacheStrategy(DiskCacheStrategy.RESOURCE)

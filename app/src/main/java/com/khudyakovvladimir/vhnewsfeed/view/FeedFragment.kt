@@ -74,6 +74,7 @@ class FeedFragment: Fragment() {
             editor.putBoolean("database", true)
             editor.apply()
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -86,7 +87,7 @@ class FeedFragment: Fragment() {
         newsViewModelFactory = factory.createNewsViewModelFactory(activity!!.application)
         newsViewModel = ViewModelProvider(this, newsViewModelFactory).get(NewsViewModel::class.java)
 
-        val list = listOf(NewsEntity(1,"pull down", "to update", "https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage"))
+        val list = listOf(NewsEntity(0,"pull down", "to update", "https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage"))
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.visibility = View.INVISIBLE
@@ -105,41 +106,46 @@ class FeedFragment: Fragment() {
 
         animationHelper.fadeInView(recyclerView, 1500)
 
-        newsViewModel.getListNews().observe(this) {
+        newsViewModel.getListNews()?.observe(this) {
             newsFeedAdapter.list = it
 
             if(systemHelper.isConnectionAvailable(context!!)) {
                 Log.d("TAG", "data from Internet")
-                newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                newsFeedAdapter.notifyDataSetChanged()
             }else {
                 Log.d("TAG", "data from DB")
                 CoroutineScope(Dispatchers.Main).launch {
                     val job = launch {
-                        newsFeedAdapter.list = newsViewModel.getNewsFromDB()
-                        delay(3000)
-                        Log.d("TAG", "list = ${newsFeedAdapter.list}")
+                        newsViewModel.getNewsFromDB()
+                        newsFeedAdapter.notifyDataSetChanged()
+                    //Log.d("TAG", "list = ${newsFeedAdapter.list}")
                     }
                     job.join()
 
 
                 }
             }
-
-            //newsFeedAdapter.list = newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    newsHelper.getNewsAndSave(activity!!.applicationContext)
-                    newsFeedAdapter.notifyDataSetChanged()
+                    //newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                    //newsFeedAdapter.notifyDataSetChanged()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
+                    }
                 }
             }
         })
     }
 
     private fun navigateToSingleNews(newsId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
+        }
         val bundle = Bundle()
         bundle.putInt("newsId", newsId)
         findNavController().navigate(R.id.singleNews, bundle)

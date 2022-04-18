@@ -12,7 +12,7 @@ interface NewsDAO {
     @Query("SELECT * FROM news")
     fun getAllNewsAsLiveData(): LiveData<List<NewsEntity>>?
 
-    @Query("SELECT COUNT(id) FROM news")
+    @Query("SELECT COUNT(*) FROM news")
     fun getCount(): Int
 
     @Query("SELECT * FROM news WHERE id = :id")
