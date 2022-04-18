@@ -33,13 +33,15 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                             var title = response.body()?.articles!![i].title
                             var description = response.body()?.articles!![i].description
                             var urlToImage = response.body()?.articles!![i].urlToImage
+                            var url = response.body()?.articles!![i].url
 
                             if(title == null)  title = ""
                             if(description == null) description = ""
                             if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
-                            val urlToString = urlToImage.toString()
+                            val urlToImageToString = urlToImage.toString()
+                            val urlToString = url.toString()
 
-                            newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
+                            newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToImageToString, urlToString))
                         }
                     }
                 }
@@ -81,18 +83,20 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                                 var title = response.body()?.articles!![i].title
                                 var description = response.body()?.articles!![i].description
                                 var urlToImage = response.body()?.articles!![i].urlToImage
+                                var url = response.body()?.articles!![i].url
 
                                 //Log.d("TAG", "i = $i")
 
                                 if(title == null)  title = ""
                                 if(description == null) description = ""
                                 if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
-                                val urlToString = urlToImage.toString()
+                                val urlToImageToString = urlToImage.toString()
+                                val urlToString = url.toString()
 
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToString))
+                                    newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToImageToString, urlToString))
                                 }
-                                listNewsEntity.add(NewsEntity(i, title, description, urlToString))
+                                listNewsEntity.add(NewsEntity(i, title, description, urlToImageToString, urlToString))
                             }
                             newsFeedAdapter.list = listNewsEntity
                             newsFeedAdapter.notifyDataSetChanged()

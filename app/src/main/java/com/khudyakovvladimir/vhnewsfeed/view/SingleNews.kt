@@ -53,6 +53,7 @@ class SingleNews: Fragment() {
     lateinit var imageViewSingleNews: ImageView
     lateinit var textViewSingleNewsTitle: TextView
     lateinit var textViewSingleNewsDescription: TextView
+    lateinit var textViewSingleNewsUrl: TextView
     lateinit var singleNewsLinearLayout: LinearLayout
 
     lateinit var buttonPrev: Button
@@ -75,6 +76,7 @@ class SingleNews: Fragment() {
         imageViewSingleNews = view.findViewById(R.id.imageViewSingleNews)
         textViewSingleNewsTitle = view.findViewById(R.id.textViewSingleNewsTitle)
         textViewSingleNewsDescription = view.findViewById(R.id.textViewSingleNewsDescription)
+        textViewSingleNewsUrl = view.findViewById(R.id.textViewSingleNewsUrl)
 
         buttonPrev = view.findViewById(R.id.prev)
         buttonNext = view.findViewById(R.id.next)
@@ -169,6 +171,8 @@ class SingleNews: Fragment() {
                 textViewSingleNewsDescription.text = tempNews.description
                 //animationHelper.rotate(activity!!.applicationContext, textViewSingleNewsDescription)
                 animationHelper.rightToLeft(activity!!.applicationContext, textViewSingleNewsDescription)
+
+                textViewSingleNewsUrl.text = tempNews.url
             }
         }
     }

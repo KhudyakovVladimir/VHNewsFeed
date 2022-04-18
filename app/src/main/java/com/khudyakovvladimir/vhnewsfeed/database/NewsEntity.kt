@@ -17,5 +17,8 @@ data class NewsEntity(
     var description: String,
 
     @ColumnInfo(name = "urlToImage", typeAffinity = ColumnInfo.TEXT)
-    var urlToImage: String
+    var urlToImage: String,
+
+    @ColumnInfo(name = "url", typeAffinity = ColumnInfo.TEXT)
+    var url: String
 )

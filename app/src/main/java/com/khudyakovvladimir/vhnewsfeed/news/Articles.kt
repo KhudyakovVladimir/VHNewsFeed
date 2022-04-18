@@ -6,5 +6,6 @@ data class Articles(
     var author: String,
     var title: String,
     var description: String,
-    var urlToImage: URL
+    var urlToImage: URL,
+    var url: URL
 )

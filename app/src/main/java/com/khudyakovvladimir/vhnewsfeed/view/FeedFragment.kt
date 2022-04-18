@@ -87,7 +87,7 @@ class FeedFragment: Fragment() {
         newsViewModelFactory = factory.createNewsViewModelFactory(activity!!.application)
         newsViewModel = ViewModelProvider(this, newsViewModelFactory).get(NewsViewModel::class.java)
 
-        val list = listOf(NewsEntity(0,"pull down", "to update", "https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage"))
+        val list = listOf(NewsEntity(0,"pull down", "to update", "https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage", ""))
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.visibility = View.INVISIBLE
