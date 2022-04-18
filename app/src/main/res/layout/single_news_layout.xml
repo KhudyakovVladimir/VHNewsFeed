@@ -35,5 +35,38 @@
             android:layout_weight="5"
             android:textSize="17sp"
             android:textColor="#595959"/>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/singleNewsLinearLayoutButtons"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/prev"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="prev"
+            android:background="@color/black"
+            >
+        </Button>
+
+        <Button
+            android:id="@+id/next"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="next"
+            android:background="@color/black"
+            >
+        </Button>
+
+    </LinearLayout>
 
 </LinearLayout>

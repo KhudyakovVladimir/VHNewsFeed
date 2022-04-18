@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -14,8 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.khudyakovvladimir.vhnewsfeed.R
@@ -29,7 +28,6 @@ import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModel
 import com.khudyakovvladimir.vhnewsfeed.viewmodel.NewsViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.URL
 import javax.inject.Inject
@@ -57,6 +55,9 @@ class SingleNews: Fragment() {
     lateinit var textViewSingleNewsDescription: TextView
     lateinit var singleNewsLinearLayout: LinearLayout
 
+    lateinit var buttonPrev: Button
+    lateinit var buttonNext: Button
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -74,6 +75,10 @@ class SingleNews: Fragment() {
         imageViewSingleNews = view.findViewById(R.id.imageViewSingleNews)
         textViewSingleNewsTitle = view.findViewById(R.id.textViewSingleNewsTitle)
         textViewSingleNewsDescription = view.findViewById(R.id.textViewSingleNewsDescription)
+
+        buttonPrev = view.findViewById(R.id.prev)
+        buttonNext = view.findViewById(R.id.next)
+
         singleNewsLinearLayout = view.findViewById(R.id.singleNewsLinearLayout)
 
         newsViewModelFactory = factory.createNewsViewModelFactory(activity!!.application)
@@ -96,23 +101,37 @@ class SingleNews: Fragment() {
 
         singleNewsLinearLayout.setOnTouchListener(object: OnHorizontalSwipeListener(context!!) {
             override fun onRightSwipe() {
-
                 if(id > 0 && id < countOfNews - 1) {
-                    setContent(id--!!)
+                    id--
+                    setContent(id)
                     Log.d("TAG", "SingleNews - onRightSwipe() - id = $id")
                 }
-
             }
 
             override fun onLeftSwipe() {
-
                 if(id > 0 && id < countOfNews - 1) {
-                    setContent(id++!!)
+                    id++
+                    setContent(id)
                     Log.d("TAG", "SingleNews - onLeftSwipe() - id = $id")
                 }
-
             }
         })
+
+        buttonPrev.setOnClickListener {
+            if(id > 0 && id < countOfNews - 1) {
+                id--
+                setContent(id)
+                Log.d("TAG", "SingleNews - buttonPrev.setOnClickListener() - id = $id")
+            }
+
+        }
+        buttonNext.setOnClickListener {
+            if(id > 0 && id < countOfNews - 1) {
+                id++
+                setContent(id)
+                Log.d("TAG", "SingleNews - buttonNext.setOnClickListener() - id = $id")
+            }
+        }
 
     }
 
@@ -141,8 +160,15 @@ class SingleNews: Fragment() {
                     imageViewSingleNews.setImageResource(R.drawable.stub_black)
                 }
 
+                animationHelper.alpha(activity!!.applicationContext, imageViewSingleNews)
+
                 textViewSingleNewsTitle.text = tempNews.title
+                //animationHelper.alpha(activity!!.applicationContext, textViewSingleNewsTitle)
+                animationHelper.leftToRight(activity!!.applicationContext, textViewSingleNewsTitle)
+
                 textViewSingleNewsDescription.text = tempNews.description
+                //animationHelper.rotate(activity!!.applicationContext, textViewSingleNewsDescription)
+                animationHelper.rightToLeft(activity!!.applicationContext, textViewSingleNewsDescription)
             }
         }
     }
