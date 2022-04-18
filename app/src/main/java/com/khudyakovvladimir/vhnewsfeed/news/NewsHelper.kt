@@ -18,12 +18,12 @@ import javax.inject.Inject
 class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
     fun getNewsAndSave(context: Context) {
-        Log.d("TAG", "getNewsAndSave()")
+        //Log.d("TAG", "getNewsAndSave()")
 
         context.retrofit.create(NewsApi::class.java).getNews().enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 if(response.isSuccessful) {
-                    Log.d("TAG", "getNewsAndSave() - onResponse() - isSuccessful")
+                    //Log.d("TAG", "getNewsAndSave() - onResponse() - isSuccessful")
                     CoroutineScope(Dispatchers.Main).launch {
 
                         newsDAO.deleteAllNews()
@@ -44,17 +44,17 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                     }
                 }
                 else {
-                    Log.d("TAG", "getNewsAndSave() - onResponse() - RESPONSE is NOT successful")
+                    //Log.d("TAG", "getNewsAndSave() - onResponse() - RESPONSE is NOT successful")
                 }
             }
             override fun onFailure(call: Call<News>, t: Throwable) {
-                Log.d("TAG", "getNewsAndSave() - onFailure")
+                //Log.d("TAG", "getNewsAndSave() - onFailure")
             }
         })
     }
 
     fun getNewsAndReturnList(context: Context, newsFeedAdapter: NewsFeedAdapter): List<NewsEntity> {
-        Log.d("TAG", "getNewsAndReturnList()")
+        //Log.d("TAG", "getNewsAndReturnList()")
 
         val listNewsEntity = arrayListOf<NewsEntity>()
         listNewsEntity.clear()
@@ -62,11 +62,11 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
         context.retrofit.create(NewsApi::class.java).getNews().enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 if(response.isSuccessful) {
-                    Log.d("TAG", "getNewsAndReturnList - onResponse - isSuccessful")
+                    //Log.d("TAG", "getNewsAndReturnList - onResponse - isSuccessful")
 
                     CoroutineScope(Dispatchers.IO).launch {
                         val countOfNews = newsDAO.getCount()
-                        Log.d("TAG", "count of news = $countOfNews")
+                        //Log.d("TAG", "count of news = $countOfNews")
 
                         CoroutineScope(Dispatchers.Main).launch {
 
@@ -82,7 +82,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                                 var description = response.body()?.articles!![i].description
                                 var urlToImage = response.body()?.articles!![i].urlToImage
 
-                                Log.d("TAG", "i = $i")
+                                //Log.d("TAG", "i = $i")
 
                                 if(title == null)  title = ""
                                 if(description == null) description = ""
@@ -100,12 +100,12 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                     }
                 }
                 else {
-                    Log.d("TAG", "getNewsAndReturnList() - onResponse() - RESPONSE is NOT successful")
+                    //Log.d("TAG", "getNewsAndReturnList() - onResponse() - RESPONSE is NOT successful")
                 }
             }
             override fun onFailure(call: Call<News>, t: Throwable) {
-                Log.d("TAG", "getNewsAndReturnList() - onFailure")
-                Log.d("TAG", "t = ${t.printStackTrace()}")
+                //Log.d("TAG", "getNewsAndReturnList() - onFailure")
+                //Log.d("TAG", "t = ${t.printStackTrace()}")
             }
         })
 

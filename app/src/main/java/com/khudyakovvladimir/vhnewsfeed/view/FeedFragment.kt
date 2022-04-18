@@ -132,8 +132,8 @@ class FeedFragment: Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    //newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
-                    //newsFeedAdapter.notifyDataSetChanged()
+                    newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                    newsFeedAdapter.notifyDataSetChanged()
                     CoroutineScope(Dispatchers.IO).launch {
                         Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
                     }
@@ -143,9 +143,7 @@ class FeedFragment: Fragment() {
     }
 
     private fun navigateToSingleNews(newsId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
-        }
+        Log.d("TAG", "navigateToSingleNews() - newsId =  $newsId")
         val bundle = Bundle()
         bundle.putInt("newsId", newsId)
         findNavController().navigate(R.id.singleNews, bundle)
