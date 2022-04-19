@@ -9,6 +9,7 @@ import com.khudyakovvladimir.vhnewsfeed.application.retrofit
 import com.khudyakovvladimir.vhnewsfeed.database.NewsDAO
 import com.khudyakovvladimir.vhnewsfeed.database.NewsEntity
 import com.khudyakovvladimir.vhnewsfeed.recyclerview.NewsFeedAdapter
+import com.khudyakovvladimir.vhnewsfeed.utils.SystemHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,45 +22,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 
-class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
-
-    fun getNewsAndSave(context: Context) {
-        //Log.d("TAG", "getNewsAndSave()")
-
-        context.retrofit.create(NewsApi::class.java).getNews().enqueue(object : Callback<News> {
-            override fun onResponse(call: Call<News>, response: Response<News>) {
-                if(response.isSuccessful) {
-                    //Log.d("TAG", "getNewsAndSave() - onResponse() - isSuccessful")
-                    CoroutineScope(Dispatchers.Main).launch {
-
-                        newsDAO.deleteAllNews()
-
-                        for (i in response.body()?.articles!!.indices) {
-
-                            var title = response.body()?.articles!![i].title
-                            var description = response.body()?.articles!![i].description
-                            var urlToImage = response.body()?.articles!![i].urlToImage
-                            var url = response.body()?.articles!![i].url
-
-                            if(title == null)  title = ""
-                            if(description == null) description = ""
-                            if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage").toString()
-                            val urlToImageToString = urlToImage.toString()
-                            val urlToString = url.toString()
-
-                            newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToImageToString, urlToString))
-                        }
-                    }
-                }
-                else {
-                    //Log.d("TAG", "getNewsAndSave() - onResponse() - RESPONSE is NOT successful")
-                }
-            }
-            override fun onFailure(call: Call<News>, t: Throwable) {
-                //Log.d("TAG", "getNewsAndSave() - onFailure")
-            }
-        })
-    }
+class NewsHelper @Inject constructor(var newsDAO: NewsDAO, var systemHelper: SystemHelper) {
 
     fun getNewsAndReturnList(context: Context, newsFeedAdapter: NewsFeedAdapter): List<NewsEntity> {
         //Log.d("TAG", "getNewsAndReturnList()")
@@ -94,7 +57,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                                 //Log.d("TAG", "i = $i")
 
                                 if(urlToImage != null) {
-                                    if(!checkURL(urlToImage)) {
+                                    if(!systemHelper.checkURL(urlToImage)) {
                                         //Log.d("TAG", "WRONG_URL = $urlToImage")
                                         urlToImage = "https://${urlToImage}"
                                     }else {
@@ -103,7 +66,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                                 }
 
                                 if(url != null) {
-                                    if(!checkURL(url)) {
+                                    if(!systemHelper.checkURL(url)) {
                                         //Log.d("TAG", "WRONG_URL = $urlToImage")
                                         url = "https://${urlToImage}"
                                     }else {
@@ -144,24 +107,4 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
         return listNewsEntity
     }
-
-    fun checkURL(input: CharSequence): Boolean {
-        if (TextUtils.isEmpty(input)) {
-            return false
-        }
-        val URL_PATTERN: Pattern = Patterns.WEB_URL
-        var isURL: Boolean = URL_PATTERN.matcher(input).matches()
-        if (!isURL) {
-            val urlString = input.toString() + ""
-            if (URLUtil.isNetworkUrl(urlString)) {
-                try {
-                    URL(urlString)
-                    isURL = true
-                } catch (e: Exception) {
-                }
-            }
-        }
-        return isURL
-    }
-
 }

@@ -11,6 +11,7 @@ import com.khudyakovvladimir.vhnewsfeed.utils.AnimationHelper
 import com.khudyakovvladimir.vhnewsfeed.utils.SystemHelper
 import com.khudyakovvladimir.vhnewsfeed.view.FeedFragment
 import com.khudyakovvladimir.vhnewsfeed.view.SingleNews
+import com.khudyakovvladimir.vhnewsfeed.view.WebViewFragment
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -22,6 +23,7 @@ interface AppComponent {
     fun injectFeedFragment(feedFragment: FeedFragment)
     fun injectSingleNews(singleNews: SingleNews)
     fun injectNewsHelper(newsHelper: NewsHelper)
+    fun injectWebViewFragment(webViewFragment: WebViewFragment)
 
     @Component.Builder
     interface Builder {
@@ -36,8 +38,8 @@ interface AppComponent {
 class MainModule {
 
     @Provides
-    fun provideNewsHelper(newsDAO: NewsDAO): NewsHelper {
-        return NewsHelper(newsDAO)
+    fun provideNewsHelper(newsDAO: NewsDAO, systemHelper: SystemHelper): NewsHelper {
+        return NewsHelper(newsDAO, systemHelper)
     }
 
     @Provides

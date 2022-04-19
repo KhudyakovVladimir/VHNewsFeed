@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -58,6 +59,8 @@ class SingleNews: Fragment() {
 
     lateinit var buttonPrev: Button
     lateinit var buttonNext: Button
+
+    var url = ""
 
 
     override fun onAttach(context: Context) {
@@ -135,13 +138,24 @@ class SingleNews: Fragment() {
             }
         }
 
+        imageViewSingleNews.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("url", url)
+            findNavController().navigate(R.id.webViewFragment, bundle)
+        }
+
     }
 
     private fun setContent (id: Int) {
         Log.d("TAG", "SingleNews - setContent()")
-        var tempNews: NewsEntity
+        var tempNews: NewsEntity = NewsEntity(0,"","","","123")
         CoroutineScope(Dispatchers.IO).launch {
-            var tempNews = newsViewModel.getNewsById(id!!)!!
+
+            val job = launch {
+                tempNews = newsViewModel.getNewsById(id!!)!!
+            }
+            job.join()
+
             //Log.d("TAG", "${tempNews.title}")
 
             CoroutineScope(Dispatchers.Main).launch {
@@ -173,6 +187,7 @@ class SingleNews: Fragment() {
                 animationHelper.rightToLeft(activity!!.applicationContext, textViewSingleNewsDescription)
 
                 textViewSingleNewsUrl.text = tempNews.url
+                url = tempNews.url
             }
         }
     }

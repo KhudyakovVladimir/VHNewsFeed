@@ -10,5 +10,9 @@
         <action android:id="@+id/action_feedFragment_to_singleNews" app:destination="@id/singleNews"/>
     </fragment>
     <fragment android:id="@+id/singleNews" android:name="com.khudyakovvladimir.vhnewsfeed.view.SingleNews"
-              android:label="SingleNews"/>
+              android:label="SingleNews">
+        <action android:id="@+id/action_singleNews_to_webViewFragment" app:destination="@id/webViewFragment"/>
+    </fragment>
+    <fragment android:id="@+id/webViewFragment" android:name="com.khudyakovvladimir.vhnewsfeed.view.WebViewFragment"
+              android:label="WebViewFragment"/>
 </navigation>

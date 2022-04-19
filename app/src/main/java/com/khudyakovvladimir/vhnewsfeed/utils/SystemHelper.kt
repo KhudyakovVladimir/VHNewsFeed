@@ -4,7 +4,12 @@ import android.content.Context
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
+import android.webkit.URLUtil
+import java.net.URL
+import java.util.regex.Pattern
 
 class SystemHelper {
 
@@ -40,5 +45,24 @@ class SystemHelper {
             }
         }
         return false
+    }
+
+    fun checkURL(input: CharSequence): Boolean {
+        if (TextUtils.isEmpty(input)) {
+            return false
+        }
+        val pattern: Pattern = Patterns.WEB_URL
+        var isURL: Boolean = pattern.matcher(input).matches()
+        if (!isURL) {
+            val urlString = input.toString() + ""
+            if (URLUtil.isNetworkUrl(urlString)) {
+                try {
+                    URL(urlString)
+                    isURL = true
+                } catch (e: Exception) {
+                }
+            }
+        }
+        return isURL
     }
 }

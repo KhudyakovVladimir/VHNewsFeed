@@ -24,23 +24,8 @@ class NewsViewModel @Inject constructor(
 
     fun getListNews(): LiveData<List<NewsEntity>>? {
         Log.d("TAG", "NewsViewModel - getListNews()")
-        viewModelScope.launch {
-            //listNews = newsDAO.getAllNewsAsLiveData()!!
-        }
         return listNews
     }
-
-//    fun getNewsFromDB(): List<NewsEntity> {
-//        var list = listOf<NewsEntity>()
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val job = launch {
-//                list = newsDAO.getNewsFromDatabase()
-//                //listNews.value = list
-//            }
-//            job.join()
-//        }
-//        return list
-//    }
 
     fun getNewsFromDB(): LiveData<List<NewsEntity>>? {
         CoroutineScope(Dispatchers.IO).launch {
