@@ -8,6 +8,9 @@
               android:name="com.khudyakovvladimir.vhnewsfeed.view.FeedFragment"
               android:label="FeedFragment">
         <action android:id="@+id/action_feedFragment_to_singleNews" app:destination="@id/singleNews"/>
+        <action
+            android:id="@+id/action_feedFragment_to_topicFragment"
+            app:destination="@id/topicFragment" />
     </fragment>
     <fragment android:id="@+id/singleNews" android:name="com.khudyakovvladimir.vhnewsfeed.view.SingleNews"
               android:label="SingleNews">
@@ -15,4 +18,8 @@
     </fragment>
     <fragment android:id="@+id/webViewFragment" android:name="com.khudyakovvladimir.vhnewsfeed.view.WebViewFragment"
               android:label="WebViewFragment"/>
+    <fragment
+        android:id="@+id/topicFragment"
+        android:name="com.khudyakovvladimir.vhnewsfeed.view.TopicFragment"
+        android:label="TopicFragment" />
 </navigation>

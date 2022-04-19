@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/slam/AndroidStudioProjects/VHNewsFeed/app/src/main/res/layout/feed_fragment_layout.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/slam/AndroidStudioProjects/VHNewsFeed/app/src/main/res/layout/single_news_layout.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/slam/AndroidStudioProjects/VHNewsFeed/app/src/main/res/layout/topic_fragment_layout.xml" value="0.20208333333333334" />
       </map>
     </option>
   </component>

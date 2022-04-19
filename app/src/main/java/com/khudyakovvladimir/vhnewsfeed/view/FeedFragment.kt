@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.khudyakovvladimir.vhnewsfeed.R
 import com.khudyakovvladimir.vhnewsfeed.application.appComponent
 import com.khudyakovvladimir.vhnewsfeed.database.DBHelper
@@ -34,6 +35,7 @@ class FeedFragment: Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newsFeedAdapter: NewsFeedAdapter
     private var isDatabaseCreated = false
+    private lateinit var fab: FloatingActionButton
 
     @Inject
     lateinit var newsHelper: NewsHelper
@@ -84,6 +86,13 @@ class FeedFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var topic = arguments?.getString("topic","")
+        if(topic == null) {
+            topic = "earth"
+        }
+
+        Log.d("TAG", "topic = $topic")
+
         newsViewModelFactory = factory.createNewsViewModelFactory(activity!!.application)
         newsViewModel = ViewModelProvider(this, newsViewModelFactory).get(NewsViewModel::class.java)
 
@@ -112,7 +121,7 @@ class FeedFragment: Fragment() {
             if(systemHelper.isConnectionAvailable(context!!)) {
                 Log.d("TAG", "data from Internet")
                 //newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
-                newsHelper.getNewsByTopic(activity!!.applicationContext, newsFeedAdapter, "spacex")
+                newsHelper.getNewsByTopic(activity!!.applicationContext, newsFeedAdapter, topic!!)
                 newsFeedAdapter.notifyDataSetChanged()
             }else {
                 Log.d("TAG", "data from DB")
@@ -133,14 +142,20 @@ class FeedFragment: Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
-                    newsFeedAdapter.notifyDataSetChanged()
+                    //newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                    //newsHelper.getNewsByTopic(activity!!.applicationContext, newsFeedAdapter, topic!!)
+                    //newsFeedAdapter.notifyDataSetChanged()
                     CoroutineScope(Dispatchers.IO).launch {
-                        Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
+                        //Log.d("TAG", "count of news = ${newsViewModel.newsDAO.getCount()}")
                     }
                 }
             }
         })
+
+        fab = view.findViewById(R.id.floatingActionButton)
+        fab.setOnClickListener {
+            findNavController().navigate(R.id.topicFragment)
+        }
     }
 
     private fun navigateToSingleNews(newsId: Int) {
