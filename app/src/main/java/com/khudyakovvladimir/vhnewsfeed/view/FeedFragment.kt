@@ -111,7 +111,8 @@ class FeedFragment: Fragment() {
 
             if(systemHelper.isConnectionAvailable(context!!)) {
                 Log.d("TAG", "data from Internet")
-                newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                //newsHelper.getNewsAndReturnList(activity!!.applicationContext, newsFeedAdapter)
+                newsHelper.getNewsByTopic(activity!!.applicationContext, newsFeedAdapter, "spacex")
                 newsFeedAdapter.notifyDataSetChanged()
             }else {
                 Log.d("TAG", "data from DB")

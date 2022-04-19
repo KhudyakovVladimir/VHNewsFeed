@@ -107,4 +107,89 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO, var systemHelper: Sys
 
         return listNewsEntity
     }
+
+    //"$city,$countryCode"
+    fun getNewsByTopic(context: Context, newsFeedAdapter: NewsFeedAdapter, topic: String): List<NewsEntity> {
+        //Log.d("TAG", "getNewsByTopic")
+
+        val listNewsEntity = arrayListOf<NewsEntity>()
+        listNewsEntity.clear()
+
+        context.retrofit.create(NewsApi::class.java).getNewsByTopic(topic).enqueue(object : Callback<News> {
+            override fun onResponse(call: Call<News>, response: Response<News>) {
+                if(response.isSuccessful) {
+                    Log.d("TAG", "getNewsByTopic() - onResponse - isSuccessful")
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val countOfNews = newsDAO.getCount()
+                        //Log.d("TAG", "count of news = $countOfNews")
+
+                        CoroutineScope(Dispatchers.Main).launch {
+
+                            if(countOfNews != 0) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    newsDAO.deleteAllNews()
+                                }
+                            }
+
+                            for (i in response.body()?.articles!!.indices) {
+
+                                var title = response.body()?.articles!![i].title
+                                var description = response.body()?.articles!![i].description
+                                var urlToImage = response.body()?.articles!![i].urlToImage
+                                var url = response.body()?.articles!![i].url
+
+                                //Log.d("TAG", "i = $i")
+
+                                if(urlToImage != null) {
+                                    if(!systemHelper.checkURL(urlToImage)) {
+                                        //Log.d("TAG", "WRONG_URL = $urlToImage")
+                                        urlToImage = "https://${urlToImage}"
+                                    }else {
+                                        //Log.d("TAG", "Correct_URL = $urlToImage")
+                                    }
+                                }
+
+                                if(url != null) {
+                                    if(!systemHelper.checkURL(url)) {
+                                        //Log.d("TAG", "WRONG_URL = $urlToImage")
+                                        url = "https://${urlToImage}"
+                                    }else {
+                                        //Log.d("TAG", "Correct_URL = $urlToImage")
+                                    }
+                                }
+
+                                if(title == null)  title = ""
+                                if(description == null) description = ""
+                                if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage").toString()
+                                val urlToImageToString = urlToImage.toString()
+                                val urlToString = url.toString()
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    newsDAO.insertNewsEntity(NewsEntity(i, title, description, urlToImageToString, urlToString))
+                                }
+                                listNewsEntity.add(NewsEntity(i, title, description, urlToImageToString, urlToString))
+                            }
+                            newsFeedAdapter.list = listNewsEntity
+                            newsFeedAdapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+                else {
+                    Log.d("TAG", "getNewsByTopic() - onResponse() - RESPONSE is NOT successful")
+                }
+            }
+            override fun onFailure(call: Call<News>, t: Throwable) {
+                //Log.d("TAG", "getNewsAndReturnList() - onFailure")
+                if(t is IOException) {
+                    Log.d("TAG", "getNewsByTopic() - onFailure - is IOException")
+                    Log.d("TAG", "getNewsByTopic() - onFailure - ${t.stackTraceToString()}")
+                }else {
+                    Log.d("TAG", "getNewsByTopic() - onFailure - conversion issue")
+                }
+            }
+        })
+
+        return listNewsEntity
+    }
 }

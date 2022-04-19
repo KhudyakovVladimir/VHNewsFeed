@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
+import android.webkit.*
 import androidx.fragment.app.Fragment
 import com.khudyakovvladimir.vhnewsfeed.R
 import com.khudyakovvladimir.vhnewsfeed.application.appComponent
@@ -37,6 +37,28 @@ class WebViewFragment: Fragment() {
 
         val url = arguments?.getString("url","")
         Log.d("TAG", "WebViewFragment -  onViewCreated() -  url = $url")
+
+        webView.loadUrl("file:///android_asset/loadImage.html")
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+                super.onReceivedError(view, request, error)
+                Log.d("TAG", "WebViewFragment -  onReceivedError()")
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                errorResponse: WebResourceResponse?
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                Log.d("TAG", "WebViewFragment - onReceivedHttpError")
+            }
+        }
 
         webView.loadUrl(url!!)
     }
