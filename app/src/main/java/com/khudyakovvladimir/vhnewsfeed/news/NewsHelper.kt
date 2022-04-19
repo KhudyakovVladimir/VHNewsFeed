@@ -1,7 +1,10 @@
 package com.khudyakovvladimir.vhnewsfeed.news
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
+import android.webkit.URLUtil
 import com.khudyakovvladimir.vhnewsfeed.application.retrofit
 import com.khudyakovvladimir.vhnewsfeed.database.NewsDAO
 import com.khudyakovvladimir.vhnewsfeed.database.NewsEntity
@@ -12,8 +15,11 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import java.net.URL
+import java.util.regex.Pattern
 import javax.inject.Inject
+
 
 class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
@@ -37,7 +43,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
                             if(title == null)  title = ""
                             if(description == null) description = ""
-                            if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
+                            if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage").toString()
                             val urlToImageToString = urlToImage.toString()
                             val urlToString = url.toString()
 
@@ -64,7 +70,7 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
         context.retrofit.create(NewsApi::class.java).getNews().enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 if(response.isSuccessful) {
-                    //Log.d("TAG", "getNewsAndReturnList - onResponse - isSuccessful")
+                    Log.d("TAG", "getNewsAndReturnList - onResponse - isSuccessful")
 
                     CoroutineScope(Dispatchers.IO).launch {
                         val countOfNews = newsDAO.getCount()
@@ -87,9 +93,27 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
 
                                 //Log.d("TAG", "i = $i")
 
+                                if(urlToImage != null) {
+                                    if(!checkURL(urlToImage)) {
+                                        //Log.d("TAG", "WRONG_URL = $urlToImage")
+                                        urlToImage = "https://${urlToImage}"
+                                    }else {
+                                        //Log.d("TAG", "Correct_URL = $urlToImage")
+                                    }
+                                }
+
+                                if(url != null) {
+                                    if(!checkURL(url)) {
+                                        //Log.d("TAG", "WRONG_URL = $urlToImage")
+                                        url = "https://${urlToImage}"
+                                    }else {
+                                        //Log.d("TAG", "Correct_URL = $urlToImage")
+                                    }
+                                }
+
                                 if(title == null)  title = ""
                                 if(description == null) description = ""
-                                if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage")
+                                if(urlToImage == null) urlToImage = URL("https://yandex.ru/images/search?pos=22&from=tabbar&img_url=https%3A%2F%2Foboi.ws%2Foriginals%2Foriginal_5834_oboi_bolota_na_fone_gor_4500x3008.jpg&text=photo&rpt=simage").toString()
                                 val urlToImageToString = urlToImage.toString()
                                 val urlToString = url.toString()
 
@@ -104,16 +128,40 @@ class NewsHelper @Inject constructor(var newsDAO: NewsDAO) {
                     }
                 }
                 else {
-                    //Log.d("TAG", "getNewsAndReturnList() - onResponse() - RESPONSE is NOT successful")
+                    Log.d("TAG", "getNewsAndReturnList() - onResponse() - RESPONSE is NOT successful")
                 }
             }
             override fun onFailure(call: Call<News>, t: Throwable) {
                 //Log.d("TAG", "getNewsAndReturnList() - onFailure")
-                //Log.d("TAG", "t = ${t.printStackTrace()}")
+                if(t is IOException) {
+                    Log.d("TAG", "getNewsAndReturnList() - onFailure - is IOException")
+                    Log.d("TAG", "getNewsAndReturnList() - onFailure - ${t.stackTraceToString()}")
+                }else {
+                    Log.d("TAG", "getNewsAndReturnList() - onFailure - conversion issue")
+                }
             }
         })
 
         return listNewsEntity
+    }
+
+    fun checkURL(input: CharSequence): Boolean {
+        if (TextUtils.isEmpty(input)) {
+            return false
+        }
+        val URL_PATTERN: Pattern = Patterns.WEB_URL
+        var isURL: Boolean = URL_PATTERN.matcher(input).matches()
+        if (!isURL) {
+            val urlString = input.toString() + ""
+            if (URLUtil.isNetworkUrl(urlString)) {
+                try {
+                    URL(urlString)
+                    isURL = true
+                } catch (e: Exception) {
+                }
+            }
+        }
+        return isURL
     }
 
 }
